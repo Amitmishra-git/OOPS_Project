@@ -1,0 +1,51 @@
+### Create user
+POST http://localhost:8080/api/users
+Content-Type: application/json
+
+{
+  "fullName": "Riya Kapoor",
+  "email": "riya@example.com",
+  "passwordHash": "hash-riya",
+  "preferredGenres": "music,food",
+  "budgetPreference": "4000"
+}
+
+### Create venue
+POST http://localhost:8080/api/venues
+Content-Type: application/json
+
+{
+  "name": "Night Pulse Stage",
+  "address": "West Festival Grounds",
+  "latitude": 19.08,
+  "longitude": 72.88,
+  "capacity": 2500,
+  "venueType": "stage"
+}
+
+### Create event
+POST http://localhost:8080/api/events
+Content-Type: application/json
+
+{
+  "title": "Midnight Fusion",
+  "description": "Late night live set",
+  "category": "music",
+  "startTime": "2026-06-27T22:00:00",
+  "endTime": "2026-06-27T23:30:00",
+  "price": 1100,
+  "score": 87,
+  "venueId": 1
+}
+
+### Get recommendations
+GET http://localhost:8080/api/recommendations/events?userId=1
+
+### Generate schedule
+POST http://localhost:8080/api/schedules/generate?userId=1
+
+### Get organizer overview
+GET http://localhost:8080/api/analytics/overview
+
+### Get all events
+GET http://localhost:8080/api/events

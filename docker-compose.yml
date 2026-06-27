@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: festival-copilot-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: festival_copilot
+      POSTGRES_USER: festival_user
+      POSTGRES_PASSWORD: festival_password
+    volumes:
+      - festival_copilot_pgdata:/var/lib/postgresql/data
+
+volumes:
+  festival_copilot_pgdata:

@@ -1,0 +1,9 @@
+target/
+*.log
+mvn_log.txt
+steps_out.txt
+postgres_check.txt
+startup_postgres.log
+startup_postgres_2.log
+call_*.txt
+ppt_images/

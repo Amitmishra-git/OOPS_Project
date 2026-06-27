@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Festival Copilot Dashboard</title>
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #04111f;
+            --panel: rgba(10, 24, 42, 0.78);
+            --panel-strong: rgba(12, 32, 56, 0.95);
+            --line: rgba(79, 203, 255, 0.22);
+            --cyan: #27d8ff;
+            --cyan-soft: #8df0ff;
+            --amber: #f7b53f;
+            --green: #51e39c;
+            --text: #f4f7fb;
+            --muted: #9cb2c9;
+            --shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Inter, Segoe UI, Arial, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(39, 216, 255, 0.14), transparent 26%),
+                radial-gradient(circle at top right, rgba(247, 181, 63, 0.12), transparent 20%),
+                linear-gradient(180deg, #07111e 0%, #02070f 100%);
+            color: var(--text);
+        }
+
+        .shell {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 32px 20px 44px;
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 24px;
+            align-items: stretch;
+        }
+
+        .title-card, .panel {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 28px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(18px);
+        }
+
+        .title-card {
+            padding: 34px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .title-card::after {
+            content: '';
+            position: absolute;
+            inset: auto -20% -30% auto;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(39, 216, 255, 0.16), transparent 68%);
+            pointer-events: none;
+        }
+
+        .eyebrow {
+            color: var(--amber);
+            text-transform: uppercase;
+            letter-spacing: 0.24em;
+            font-size: 0.78rem;
+            margin-bottom: 16px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(2.4rem, 5vw, 4.8rem);
+            line-height: 0.95;
+            letter-spacing: -0.05em;
+        }
+
+        .subtitle {
+            margin: 18px 0 0;
+            max-width: 62ch;
+            color: var(--muted);
+            font-size: 1.02rem;
+            line-height: 1.6;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 28px;
+        }
+
+        .metric {
+            padding: 16px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .metric span {
+            display: block;
+            color: var(--muted);
+            font-size: 0.82rem;
+            margin-bottom: 10px;
+        }
+
+        .metric strong {
+            font-size: 1.5rem;
+        }
+
+        .panel {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .panel-header h2 {
+            margin: 0;
+            font-size: 1.05rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .chip {
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(39, 216, 255, 0.12);
+            border: 1px solid rgba(39, 216, 255, 0.22);
+            color: var(--cyan-soft);
+            font-size: 0.82rem;
+        }
+
+        .stack {
+            display: grid;
+            gap: 14px;
+        }
+
+        .card {
+            background: var(--panel-strong);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 16px;
+        }
+
+        .card h3 {
+            margin: 0 0 8px;
+            font-size: 1rem;
+        }
+
+        .card p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .dashboard {
+            margin-top: 24px;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 24px;
+        }
+
+        .section {
+            padding: 24px;
+        }
+
+        .section h2 {
+            margin: 0 0 18px;
+            font-size: 1.2rem;
+        }
+
+        .list, .schedule {
+            display: grid;
+            gap: 12px;
+        }
+
+        .list-item, .schedule-item {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 14px 16px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .muted { color: var(--muted); }
+
+        .bars {
+            display: grid;
+            gap: 12px;
+        }
+
+        .bar-row {
+            display: grid;
+            grid-template-columns: 120px 1fr 56px;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .bar-track {
+            height: 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.06);
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: inherit;
+            background: linear-gradient(90deg, var(--cyan), var(--green));
+        }
+
+        .footer-note {
+            margin-top: 18px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        @media (max-width: 1040px) {
+            .hero, .dashboard { grid-template-columns: 1fr; }
+            .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 640px) {
+            .shell { padding: 18px 12px 28px; }
+            .title-card, .panel, .section { padding: 18px; border-radius: 22px; }
+            .metrics { grid-template-columns: 1fr; }
+            .bar-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <main class="shell">
+        <section class="hero">
+            <div class="title-card">
+                <div class="eyebrow">Festival Copilot</div>
+                <h1>Plan smarter. Move faster. Spend better.</h1>
+                <p class="subtitle">
+                    A festival operations dashboard for attendees and organizers, combining recommendations,
+                    schedule planning, crowd visibility, budget awareness, and venue intelligence in one place.
+                </p>
+
+                <div class="metrics" id="overviewMetrics">
+                    <div class="metric"><span>Active Users</span><strong>1,248</strong></div>
+                    <div class="metric"><span>Events Today</span><strong>329</strong></div>
+                    <div class="metric"><span>Locations</span><strong>58</strong></div>
+                    <div class="metric"><span>Alerts</span><strong>7</strong></div>
+                </div>
+            </div>
+
+            <aside class="panel">
+                <div class="panel-header">
+                    <h2>Live Summary</h2>
+                    <div class="chip">API-backed</div>
+                </div>
+
+                <div class="stack" id="liveSummary">
+                    <div class="card">
+                        <h3>Recommendation Engine</h3>
+                        <p id="recommendationSummary">Loading personalized recommendations...</p>
+                    </div>
+                    <div class="card">
+                        <h3>Schedule Planner</h3>
+                        <p id="scheduleSummary">Generating a conflict-free festival schedule...</p>
+                    </div>
+                    <div class="card">
+                        <h3>Crowd & Budget</h3>
+                        <p id="analyticsSummary">Loading analytics snapshot...</p>
+                    </div>
+                </div>
+            </aside>
+        </section>
+
+        <section class="dashboard">
+            <div class="panel section">
+                <div class="panel-header">
+                    <h2>Top Recommendations</h2>
+                    <div class="chip">user 1</div>
+                </div>
+                <div class="list" id="recommendationList"></div>
+            </div>
+
+            <div class="panel section">
+                <div class="panel-header">
+                    <h2>Schedule</h2>
+                    <div class="chip">generated plan</div>
+                </div>
+                <div class="schedule" id="scheduleList"></div>
+            </div>
+        </section>
+
+        <section class="panel section" style="margin-top: 24px;">
+            <div class="panel-header">
+                <h2>Budget Allocation</h2>
+                <div class="chip">INR</div>
+            </div>
+            <div class="bars" id="budgetBars"></div>
+            <div class="footer-note">Powered by Spring Boot APIs and seeded festival data.</div>
+        </section>
+    </main>
+
+    <script>
+        const apiBase = '';
+
+        const formatCurrency = value => new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            maximumFractionDigits: 0
+        }).format(value);
+
+        function renderRecommendations(items) {
+            const list = document.getElementById('recommendationList');
+            list.innerHTML = items.map(item => `
+                <article class="list-item">
+                    <div>
+                        <strong>${item.title}</strong>
+                        <div class="muted">${item.category} · ${item.reason}</div>
+                    </div>
+                    <div>${Math.round(item.score)}</div>
+                </article>
+            `).join('');
+        }
+
+        function renderSchedule(schedule) {
+            const list = document.getElementById('scheduleList');
+            list.innerHTML = schedule.items.map(item => `
+                <article class="schedule-item">
+                    <div>
+                        <strong>${item.title}</strong>
+                        <div class="muted">${new Date(item.startTime).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})} - ${new Date(item.endTime).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</div>
+                    </div>
+                    <div>#${item.displayOrder}</div>
+                </article>
+            `).join('');
+        }
+
+        function renderBudgetBars() {
+            const budgetBars = document.getElementById('budgetBars');
+            const data = [
+                { label: 'Events', amount: 3000, ratio: 0.6 },
+                { label: 'Food & Beverages', amount: 1500, ratio: 0.3 },
+                { label: 'Miscellaneous', amount: 500, ratio: 0.1 }
+            ];
+            budgetBars.innerHTML = data.map(entry => `
+                <div class="bar-row">
+                    <div>${entry.label}</div>
+                    <div class="bar-track"><div class="bar-fill" style="width:${entry.ratio * 100}%"></div></div>
+                    <div>${formatCurrency(entry.amount)}</div>
+                </div>
+            `).join('');
+        }
+
+        async function loadDashboard() {
+            try {
+                const [recommendations, schedule, overview] = await Promise.all([
+                    fetch(`${apiBase}/api/recommendations/events?userId=1`).then(r => r.json()),
+                    fetch(`${apiBase}/api/schedules/1`).then(r => r.json()),
+                    fetch(`${apiBase}/api/analytics/overview`).then(r => r.json())
+                ]);
+
+                renderRecommendations(recommendations);
+                renderSchedule(schedule);
+                renderBudgetBars();
+
+                document.getElementById('recommendationSummary').textContent =
+                    `${recommendations.length} ranked events loaded for the current user.`;
+                document.getElementById('scheduleSummary').textContent =
+                    `${schedule.items.length} non-overlapping events in the current plan.`;
+                document.getElementById('analyticsSummary').textContent =
+                    `${overview.activeUsers} users, ${overview.alerts} alerts, and ${formatCurrency(overview.totalRevenue)} revenue tracked.`;
+
+                document.getElementById('overviewMetrics').innerHTML = `
+                    <div class="metric"><span>Active Users</span><strong>${overview.activeUsers}</strong></div>
+                    <div class="metric"><span>Events Today</span><strong>${overview.eventsToday}</strong></div>
+                    <div class="metric"><span>Locations</span><strong>${overview.locations}</strong></div>
+                    <div class="metric"><span>Alerts</span><strong>${overview.alerts}</strong></div>
+                `;
+            } catch (error) {
+                document.getElementById('recommendationSummary').textContent = 'Run the backend to load live recommendations.';
+                document.getElementById('scheduleSummary').textContent = 'Run the backend to load the generated schedule.';
+                document.getElementById('analyticsSummary').textContent = 'Run the backend to load analytics data.';
+                renderBudgetBars();
+                console.error(error);
+            }
+        }
+
+        renderBudgetBars();
+        loadDashboard();
+    </script>
+</body>
+</html>
